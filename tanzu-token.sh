@@ -15,9 +15,6 @@ TO_BE_CREATED_KUBECONFIG_FILE=$TO_BE_CREATED_KUBECONFIG_FILE_READ
 
 fi
 
-
-
-
 kubectl create serviceaccount napp-admin -n kube-system
 
 sleep 1
