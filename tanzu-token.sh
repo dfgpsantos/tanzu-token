@@ -15,6 +15,24 @@ TO_BE_CREATED_KUBECONFIG_FILE=$TO_BE_CREATED_KUBECONFIG_FILE_READ
 
 fi
 
+read -p "Do want to delete napp-admin user and clusterrolebinding before proceeding? (Y/N)" CHOICE
+
+if [[ $CHOICE =~ ^[Yy]$ ]];
+
+then
+
+echo "Deleting user napp-admin"
+kubectl delete serviceaccount napp-admin -n kube-system
+
+
+echo "Deleting clusterrolebinding napp-admin"
+kubectl delete clusterrolebinding napp-admin
+
+else
+echo "Moving on without deleting anything"
+
+fi
+
 kubectl create serviceaccount napp-admin -n kube-system
 
 sleep 1
@@ -51,11 +69,15 @@ kubectl config --kubeconfig=$TO_BE_CREATED_KUBECONFIG_FILE set-cluster $CLUSTER 
 
 sleep 1
 
+kubectl config --kubeconfig=$TO_BE_CREATED_KUBECONFIG_FILE set-credentials napp-admin --token=$TOKEN
+
+sleep 1
+
 kubectl config --kubeconfig=$TO_BE_CREATED_KUBECONFIG_FILE set-context $CONTEXT --cluster=$CLUSTER --user=napp-admin
 
 sleep 1
 
-kubectl config --kubeconfig=$TO_BE_CREATED_KUBECONFIG_FILE use-context $CONTEXT
+kubectl config --kubeconfig=$TO_BE_CREATED_KUBECONFIG_FILE use-context $CONTEXT --cluster=$CLUSTER --user=napp-admin
 
 sleep 1
 
